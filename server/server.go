@@ -1,9 +1,13 @@
 package server
 
 import (
+	"context"
 	"fmt"
 	"net/http"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	"github.com/JARNBOY/jb-isekai-shop-tutorial/config"
 	"github.com/labstack/echo/v4"
@@ -41,6 +45,9 @@ func (s *echoServer) Start() {
 
 	s.app.GET("/v1/health", s.healthCheck)
 
+	quitCh := make(chan os.Signal, 1)\
+	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM)
+	go s.gracefullyShutdown(quitCh)
 	s.httpListening()
 }
 
@@ -48,6 +55,17 @@ func (s *echoServer) httpListening() {
 	serverUrl := fmt.Sprintf(":%d", s.conf.Server.Port)
 
 	if err := s.app.Start(serverUrl); err != nil && err != http.ErrServerClosed {
+		s.app.Logger.Fatalf("Error: %s", err.Error())
+	}
+}
+
+func (s *echoServer) gracefullyShutdown(quitCh chan os.Signal) {
+	ctx := context.Background()
+
+	<-quitCh
+	s.app.Logger.Info("Shutting down server...")
+
+	if err := s.app.Shutdown(ctx); err != nil {
 		s.app.Logger.Fatalf("Error: %s", err.Error())
 	}
 }
