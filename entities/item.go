@@ -1,7 +1,9 @@
 package entities
 
-import "time"
-
+import (
+	"time"
+	_itemShopModel "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemShop/model"
+)
 type (
 	Item struct {
 		ID				uint64  	`gorm:"primaryKey;autoIncrement;"`
@@ -15,3 +17,13 @@ type (
 		UpdatedAt		time.Time 	`gorm:"not null;autoUpdateTime;"`
 	}
 )
+
+func (i *Item) ToItemModel() *_itemShopModel.Item {
+	return &_itemShopModel.Item{
+		ID:				i.ID,
+		Name:			i.Name,
+		Description:	i.Description,
+		Picture:		i.Picture,
+		Price:			i.Price,
+	}
+}

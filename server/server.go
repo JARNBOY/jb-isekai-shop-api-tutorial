@@ -11,7 +11,6 @@ import (
 	"time"
 
 	"github.com/JARNBOY/jb-isekai-shop-tutorial/config"
-	"github.com/labstack/echo/middleware"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -47,7 +46,7 @@ func NewEchoServer(conf *config.Config, db *gorm.DB) *echoServer {
 func (s *echoServer) Start() {
 	corsMiddleware := getCORSMiddleware(s.conf.Server.AllowOrigins)
 	bodyLimitMiddleware := getBodyLimitMiddleware(s.conf.Server.BodyLimit)
-	timeOutMiddleware := getTimtimeOutMiddleware(s.conf.Server.TimeOut)
+	timeOutMiddleware := getTimeOutMiddleware(s.conf.Server.TimeOut)
 
 	s.app.Use(middleware.Recover())
 	s.app.Use(middleware.Logger())
@@ -56,6 +55,9 @@ func (s *echoServer) Start() {
 	s.app.Use(timeOutMiddleware)
 
 	s.app.GET("/v1/health", s.healthCheck)
+
+	// Inject Router Endpoint current allow client use in Server
+	s.initItemShopRouter()
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM)
@@ -86,11 +88,11 @@ func (s *echoServer) healthCheck(c echo.Context) error {
 	return c.String(http.StatusOK, "OK")
 }
 
-func getTimeOutMiddlewre(timeout: time.Duration) echo.MiddlewareFunc {
+func getTimeOutMiddleware(timeout time.Duration) echo.MiddlewareFunc {
 	return middleware.TimeoutWithConfig(middleware.TimeoutConfig{
 		Skipper: 		middleware.DefaultSkipper,
 		ErrorMessage:	"Request Timeout",
-		Timeout: 		timeout * time.Second
+		Timeout: 		timeout * time.Second,
 	})
 }
 
@@ -98,7 +100,7 @@ func getTimeOutMiddlewre(timeout: time.Duration) echo.MiddlewareFunc {
 func getCORSMiddleware(allowOrigin []string) echo.MiddlewareFunc {
 	return middleware.CORSWithConfig(middleware.CORSConfig{
 		Skipper: 		middleware.DefaultSkipper,
-		AllowOrigin: 	allowOrigin,
+		AllowOrigins: 	allowOrigin,
 		AllowMethods: 	[]string{echo.GET, echo.POST, echo.PUT, echo.PATCH, echo.DELETE},
 		AllowHeaders:	[]string{echo.HeaderOrigin, echo.HeaderContentType, echo.HeaderAccept},
 	})

@@ -44,7 +44,7 @@ type(
 		Host 				string 		`mapstructure:"host" validate:"required"`
 		Port 				int 		`mapstructure:"port" validate:"required"`
 		User 				string 		`mapstructure:"user" validate:"required"`
-		Password 			int 		`mapstructure:"password" validate:"required"`
+		Password 			string 		`mapstructure:"password" validate:"required"`
 		DBName 				string 		`mapstructure:"dbname" validate:"required"`
 		SSLMode 			string 		`mapstructure:"sslmode" validate:"required"`
 		Schema 				string 		`mapstructure:"schema" validate:"required"`
