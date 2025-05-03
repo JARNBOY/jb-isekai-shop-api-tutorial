@@ -4,6 +4,7 @@ import (
 	"github.com/JARNBOY/jb-isekai-shop-tutorial/entities"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	_itemShopException "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemShop/exception"
 )
 
 type ItemShopRepositoryImpl struct{
@@ -21,7 +22,7 @@ func (r *ItemShopRepositoryImpl) Listing() ([]*entities.Item, error) {
 
 	if err := r.db.Find(itemList).Error; err != nil {
 		r.logger.Errorf("Failed to list items: %s", err.Error())
-		return nil, err
+		return nil, &_itemShopException.ItemListing{}
 	}
 
 	return itemList, nil

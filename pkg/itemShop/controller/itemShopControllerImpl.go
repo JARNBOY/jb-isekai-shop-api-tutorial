@@ -2,6 +2,8 @@ package controller
 
 import (
 	"net/http"
+
+	"github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/custom"
 	_itemShopService "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemShop/service"
 	"github.com/labstack/echo/v4"
 )
@@ -19,7 +21,7 @@ func NewItemShopControllerImpl(
 func (c *itemShopControllerImpl) Listing(pctx echo.Context) error {
 	itemModelList, err := c.itemShopService.Listing()
 	if err != nil {
-		return pctx.String(http.StatusInternalServerError, err.Error())
+		return custom.Error(pctx, http.StatusInternalServerError, err.Error())
 	}
 
 	return pctx.JSON(http.StatusOK, itemModelList)
