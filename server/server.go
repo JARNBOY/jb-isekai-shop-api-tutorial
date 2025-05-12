@@ -58,6 +58,7 @@ func (s *echoServer) Start() {
 
 	// Inject Router Endpoint current allow client use in Server
 	s.initItemShopRouter()
+	s.initItemManagingRouter()
 
 	quitCh := make(chan os.Signal, 1)
 	signal.Notify(quitCh, syscall.SIGINT, syscall.SIGTERM)

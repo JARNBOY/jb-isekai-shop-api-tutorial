@@ -32,7 +32,7 @@ func (r *ItemShopRepositoryImpl) Listing(itemFiler *_itemShopModel.ItemFilter) (
 	offset := int((itemFiler.Paginate.Page - 1) * itemFiler.Paginate.Size)
 	limit := int(itemFiler.Paginate.Size)
 
-	if err := query.Offset(offset).Limit(limit).Find(&itemList).Error; err != nil {
+	if err := query.Offset(offset).Limit(limit).Find(&itemList).Order("id asc").Error; err != nil {
 		r.logger.Errorf("Failed to list items: %s", err.Error())
 		return nil, &_itemShopException.ItemListing{}
 	}
