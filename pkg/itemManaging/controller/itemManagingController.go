@@ -1,3 +1,7 @@
 package controller
 
-type itemManagingController interface{}
+import "github.com/labstack/echo/v4"
+
+type itemManagingController interface{
+	Creating(pctx echo.Context) error
+}

@@ -1,3 +1,10 @@
 package service
 
-type ItemManagingService interface {}
+import (
+	_itemManagingModel "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemManaging/model"
+	_itemShopModel "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemShop/model"
+)
+
+type ItemManagingService interface {
+	Creating(itemCreatingReq *_itemManagingModel.ItemCreatingReq) (*_itemShopModel.Item, error)
+}

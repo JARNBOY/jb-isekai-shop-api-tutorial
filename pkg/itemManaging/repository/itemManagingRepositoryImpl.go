@@ -1,8 +1,10 @@
 package repository
 
 import (
+	"github.com/JARNBOY/jb-isekai-shop-tutorial/entities"
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
+	_itemManagingException "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemManaging/exception"
 )
 
 type itemManagingRepositoryImpl struct {
@@ -15,4 +17,15 @@ func NewItemManagingRepositoryImpl(db *gorm.DB, logger echo.Logger) *itemManagin
 		db: db,
 		logger: logger,
 	}
+}
+
+func (r *itemManagingRepositoryImpl) Creating(itemEntity *entities.Item) (*entities.Item, error) {
+	item := new(entities.Item)
+
+	if err := r.db.Create(itemEntity).Scan(item).Error; err != nil {
+		r.logger.Error("Creating Item Fail: %s", err.Error())
+		return nil, &_itemManagingException.ItemCreating{}
+	}
+
+	return itemEntity, nil
 }
