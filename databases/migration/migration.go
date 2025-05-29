@@ -13,9 +13,9 @@ func main() {
 	conf := config.ConfigGetting()
 	db := databases.NewPostgresDatabase(conf.Database)
 
-	fmt.Println(db.ConnectingGetting())
+	fmt.Println(db.Connect())
 
-	tx := db.ConnectingGetting().Begin()
+	tx := db.Connect().Begin()
 
 	playerMigration(tx)
 	adminMigration(tx)
@@ -24,7 +24,6 @@ func main() {
 	inventoryCoinMigration(tx)
 	purchaseHistoryCoinMigration(tx)
 
-	
 	if err := tx.Commit().Error; err != nil {
 		tx.Rollback()
 		panic(err)

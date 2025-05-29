@@ -16,11 +16,11 @@ type postgresDatabase struct {
 
 var (
 	postgresDatabaseInstance *postgresDatabase
-	once 					 sync.Once
+	once                     sync.Once
 )
 
 func NewPostgresDatabase(conf *config.Database) Database {
-	once.Do(func ()  {
+	once.Do(func() {
 		dsn := fmt.Sprintf(
 			"host=%s port=%d user=%s password=%s dbname=%s  sslmode=%s search_path=%s",
 			conf.Host,
@@ -31,7 +31,7 @@ func NewPostgresDatabase(conf *config.Database) Database {
 			conf.SSLMode,
 			conf.Schema,
 		)
-		
+
 		conn, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 		if err != nil {
@@ -46,6 +46,6 @@ func NewPostgresDatabase(conf *config.Database) Database {
 	return postgresDatabaseInstance
 }
 
-func (db *postgresDatabase) ConnectingGetting() *gorm.DB {
+func (db *postgresDatabase) Connect() *gorm.DB {
 	return db.DB
 }

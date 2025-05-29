@@ -1,19 +1,19 @@
 package repository
 
 import (
+	"github.com/JARNBOY/jb-isekai-shop-tutorial/databases"
 	"github.com/JARNBOY/jb-isekai-shop-tutorial/entities"
 	_itemShopException "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemShop/exception"
 	_itemShopModel "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemShop/model"
 	"github.com/labstack/echo/v4"
-	"gorm.io/gorm"
 )
 
 type ItemShopRepositoryImpl struct{
-	db *gorm.DB
+	db databases.Database
 	logger echo.Logger
 }
 
-func NewItemShopRepositoryImpl(db *gorm.DB, logger echo.Logger) ItemShopRepository {
+func NewItemShopRepositoryImpl(db databases.Database, logger echo.Logger) ItemShopRepository {
 	
 	return &ItemShopRepositoryImpl{db, logger}
 }
@@ -21,7 +21,7 @@ func NewItemShopRepositoryImpl(db *gorm.DB, logger echo.Logger) ItemShopReposito
 func (r *ItemShopRepositoryImpl) Listing(itemFiler *_itemShopModel.ItemFilter) ([]*entities.Item, error) {
 	itemList := make ([]*entities.Item, 0) // itemList is a slice of pointers
 
-	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) // select * from items
+	query := r.db.Connect().Model(&entities.Item{}).Where("is_archive = ?", false) // select * from items
 	if itemFiler.Name != "" {
 		query = query.Where("name ilike ?", "%"+itemFiler.Name+"%")
 	}
@@ -41,7 +41,7 @@ func (r *ItemShopRepositoryImpl) Listing(itemFiler *_itemShopModel.ItemFilter) (
 }
 
 func (r *ItemShopRepositoryImpl) Counting(itemFiler *_itemShopModel.ItemFilter) (int64, error) {
-	query := r.db.Model(&entities.Item{}).Where("is_archive = ?", false) // select * from items
+	query := r.db.Connect().Model(&entities.Item{}).Where("is_archive = ?", false) // select * from items
 	if itemFiler.Name != "" {
 		query = query.Where("name ilike ?", "%"+itemFiler.Name+"%")
 	}
@@ -62,7 +62,7 @@ func (r *ItemShopRepositoryImpl) Counting(itemFiler *_itemShopModel.ItemFilter) 
 func (r *ItemShopRepositoryImpl) FindById(itemID uint64) (*entities.Item, error) {
 	item := new(entities.Item)
 
-	if err := r.db.First(item, itemID).Error; err != nil {
+	if err := r.db.Connect().First(item, itemID).Error; err != nil {
 		r.logger.Errorf("Failed to find item by ID: %s", err.Error())
 		return nil, &_itemShopException.ItemNotFound{ItemID: itemID}
 	}

@@ -7,12 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
-
 func main() {
 	conf := config.ConfigGetting()
 	db := databases.NewPostgresDatabase(conf.Database)
 
-	tx := db.ConnectingGetting().Begin()
+	tx := db.Connect().Begin()
 
 	itemsAdding(tx)
 

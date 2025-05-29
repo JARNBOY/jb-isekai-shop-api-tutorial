@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/JARNBOY/jb-isekai-shop-tutorial/config"
+	"github.com/JARNBOY/jb-isekai-shop-tutorial/databases"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	"github.com/labstack/gommon/log"
@@ -19,7 +20,7 @@ import (
 
 type echoServer struct {
 	app 	*echo.Echo
-	db		*gorm.DB
+	db		databases.Database
 	conf 	*config.Config
 }
 
@@ -28,7 +29,7 @@ var (
 	server	*echoServer
 )
 
-func NewEchoServer(conf *config.Config, db *gorm.DB) *echoServer {
+func NewEchoServer(conf *config.Config, db databases.Database) *echoServer {
 	echoApp := echo.New()
 	echoApp.Logger.SetLevel(log.DEBUG)
 
