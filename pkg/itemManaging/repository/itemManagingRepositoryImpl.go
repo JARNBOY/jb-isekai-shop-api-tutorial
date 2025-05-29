@@ -5,6 +5,7 @@ import (
 	"github.com/labstack/echo/v4"
 	"gorm.io/gorm"
 	_itemManagingException "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemManaging/exception"
+	_itemManagingModel "github.com/JARNBOY/jb-isekai-shop-tutorial/pkg/itemManaging/model" 
 )
 
 type itemManagingRepositoryImpl struct {
@@ -28,4 +29,18 @@ func (r *itemManagingRepositoryImpl) Creating(itemEntity *entities.Item) (*entit
 	}
 
 	return itemEntity, nil
+}
+
+func (r *itemManagingRepositoryImpl) Editing(itemID uint64, itemEditingReq *_itemManagingModel.ItemEditingReq) (uint64, error) {
+	
+	if err := r.db.Model(&entities.Item{}).Where(
+		"id = ?", itemID,
+	).Updates(
+		itemEditingReq,
+	).Error; err != nil {
+		r.logger.Error("Editing Item Fail: %s", err.Error())
+		return 0, &_itemManagingException.ItemEditing{ItemID: itemID}
+	}
+	
+	return itemID, nil
 }

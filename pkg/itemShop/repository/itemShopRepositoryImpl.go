@@ -58,3 +58,14 @@ func (r *ItemShopRepositoryImpl) Counting(itemFiler *_itemShopModel.ItemFilter) 
 
 	return count, nil
 }
+
+func (r *ItemShopRepositoryImpl) FindById(itemID uint64) (*entities.Item, error) {
+	item := new(entities.Item)
+
+	if err := r.db.First(item, itemID).Error; err != nil {
+		r.logger.Errorf("Failed to find item by ID: %s", err.Error())
+		return nil, &_itemShopException.ItemNotFound{ItemID: itemID}
+	}
+
+	return item, nil
+}
