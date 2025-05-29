@@ -44,3 +44,18 @@ func (r *itemManagingRepositoryImpl) Editing(itemID uint64, itemEditingReq *_ite
 	
 	return itemID, nil
 }
+
+func (r *itemManagingRepositoryImpl) Archiving(itemID uint64) error {
+	if err := r.db.Table(
+		"items",
+		).Where(
+			"id = ?", itemID,
+		).Update(
+			"is_archive", true,
+		).Error; err != nil {
+		r.logger.Error("Archiving Item Fail: %s", err.Error())
+		return &_itemManagingException.ItemArchiving{ItemID: itemID}
+	}
+
+	return nil
+}
